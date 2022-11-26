@@ -1,0 +1,7 @@
+{
+  "name": "fpconv",
+  "version": "1.0.0",
+  "devDependencies": {
+    "parcel": "^2.8.0"
+  }
+}
