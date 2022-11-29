@@ -14,11 +14,13 @@ function numToBase(n: number, base: number): Array<number> {
         o.unshift(r);
         n = Math.floor(n / base);
     }
+    if (o.length == 0) {
+        o.push(0);
+    }
     return o;
 }
 
 function fracToBase(n: number, base: number, digits: number): number[] {
-    console.log("DO: ", n);
     let o: number[] = [];
     for (let i = 0; i < digits; i++) {
         n *= base;
@@ -49,29 +51,31 @@ function digitsToString(arr: number[]): string {
     return str;
 }
 
-function charToDigit(char: string): number {
-  return parseInt(char, 36);
+function stringToDigits(str: string, base: number): number[] | null {
+    let arr: number[] = [];
+    for (let ch of str) {
+        let d = parseInt(ch, 36);
+        if (d >= base) {
+            return null;
+        } else {
+            arr.push(d);
+        }
+    }
+    return arr;
 }
 
-function stringToDigits(str: string): number[] {
-  let arr: number[] = [];
-  for (let c of str) {
-    arr.push(charToDigit(c));
-  }
-  return arr;
-}
-
-function parseNumber(str: string, base: number, neg: bool): number {
-  let digits = stringToDigits(str);
-  console.log(digits);
-  let p = neg ? -1 : digits.length - 1;
-  let sum = 0;
-  for (let d of digits) {
-    console.log(`${d.toString()} * ${base}^${p}`)
-    sum += d * Math.pow(base, p);
-    p--;
-  }
-  return sum;
+function parseNumber(str: string, base: number, neg: boolean): number | null {
+    let digits = stringToDigits(str, base);
+    if (digits == null) {
+        return null;
+    }
+    let p = neg ? -1 : digits.length - 1;
+    let sum = 0;
+    for (let d of digits) {
+        sum += d * Math.pow(base, p);
+        p--;
+    }
+    return sum;
 }
 
 function formatPowers(arr: number[], base: number, start: number): string {
@@ -103,6 +107,11 @@ function update() {
 
     let parts = inputNumber.split('.');
     let intPart = parseNumber(parts[0], inputBase, false);
+    if (intPart == null) {
+        baseOutput.innerHTML = 'Invalid input';
+        productOutput.innerHTML = '';
+        return;
+    }
 
     if (parts.length == 1) {
         let digits = numToBase(intPart, base);
@@ -110,11 +119,21 @@ function update() {
         productOutput.innerHTML = formatPowers(digits, base, digits.length - 1);
     } else if (parts.length == 2) {
         let fracPart = parseNumber(parts[1], inputBase, true);
+        if (fracPart == null) {
+            baseOutput.innerHTML = 'Invalid input';
+            productOutput.innerHTML = '';
+            return;
+        }
         let intDigits = numToBase(intPart, base);
         let fracDigits = fracToBase(fracPart, base, fracLen);
         removeTrailingZeros(fracDigits);
-        baseOutput.innerHTML = digitsToString(intDigits) + '.' + digitsToString(fracDigits);
-        productOutput.innerHTML = formatPowers(intDigits, base, intDigits.length - 1) + ' + ' + formatPowers(fracDigits, base, -1);
+        if (fracDigits.length > 0) {
+            baseOutput.innerHTML = digitsToString(intDigits) + '.' + digitsToString(fracDigits);
+            productOutput.innerHTML = formatPowers(intDigits, base, intDigits.length - 1) + ' + ' + formatPowers(fracDigits, base, -1);
+        } else {
+            baseOutput.innerHTML = digitsToString(intDigits);
+            productOutput.innerHTML = formatPowers(intDigits, base, intDigits.length - 1);
+        }
     }
 }
 
