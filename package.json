@@ -4,7 +4,7 @@
   "license": "GPL-3.0-only",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build --public-url '.'"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "2.8.0",
