@@ -2,6 +2,7 @@
   "name": "fpconv",
   "version": "1.0.0",
   "devDependencies": {
+    "@parcel/transformer-sass": "2.8.0",
     "parcel": "^2.8.0"
   }
 }

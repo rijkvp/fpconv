@@ -1,10 +1,11 @@
 const ALPHABET: string[] = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 const numInput = <HTMLInputElement>document.getElementById('input-number')!;
-const baseInput = <HTMLInputElement>document.getElementById('input-base')!;
+const fromBaseInput = <HTMLInputElement>document.getElementById('input-base-from')!;
+const toBaseInput = <HTMLInputElement>document.getElementById('input-base-to')!;
 const fracLenInput = <HTMLInputElement>document.getElementById('input-frac-len')!;
 const baseOutput = document.getElementById('base-output')!;
-const powerOutput = document.getElementById('power-output')!;
+const productOutput = document.getElementById('product-output')!;
 
 function numToBase(n: number, base: number): Array<number> {
     let o: number[] = [];
@@ -17,6 +18,7 @@ function numToBase(n: number, base: number): Array<number> {
 }
 
 function fracToBase(n: number, base: number, digits: number): number[] {
+    console.log("DO: ", n);
     let o: number[] = [];
     for (let i = 0; i < digits; i++) {
         n *= base;
@@ -29,7 +31,7 @@ function fracToBase(n: number, base: number, digits: number): number[] {
     return o;
 }
 
-function digitCharacter(digit: number): string {
+function digitToChar(digit: number): string {
     if (digit >= 0 && digit <= 9) {
         return digit.toString();
     } else if (digit - 10 < ALPHABET.length) {
@@ -39,12 +41,37 @@ function digitCharacter(digit: number): string {
     }
 }
 
-function formatDigits(arr: number[]): string {
+function digitsToString(arr: number[]): string {
     let str = '';
     for (let d of arr) {
-        str += digitCharacter(d);
+        str += digitToChar(d);
     }
     return str;
+}
+
+function charToDigit(char: string): number {
+  return parseInt(char, 36);
+}
+
+function stringToDigits(str: string): number[] {
+  let arr: number[] = [];
+  for (let c of str) {
+    arr.push(charToDigit(c));
+  }
+  return arr;
+}
+
+function parseNumber(str: string, base: number, neg: bool): number {
+  let digits = stringToDigits(str);
+  console.log(digits);
+  let p = neg ? -1 : digits.length - 1;
+  let sum = 0;
+  for (let d of digits) {
+    console.log(`${d.toString()} * ${base}^${p}`)
+    sum += d * Math.pow(base, p);
+    p--;
+  }
+  return sum;
 }
 
 function formatPowers(arr: number[], base: number, start: number): string {
@@ -54,34 +81,44 @@ function formatPowers(arr: number[], base: number, start: number): string {
         if (i != 0) {
             str += ' + ';
         }
-        str += `${arr[i]} &middot; ${base}<sup>${p}</sup>`;
+        str += `${arr[i]}&middot;${base}<sup>${p}</sup>`;
     }
     return str;
 }
 
+function removeTrailingZeros(arr: number[]) {
+    while (arr[arr.length - 1] == 0) {
+        arr.pop();
+    }
+}
+
 function update() {
     baseOutput.innerHTML = '';
-    powerOutput.innerHTML = '';
+    productOutput.innerHTML = '';
 
-    let num = numInput.value;
-    let base = parseInt(baseInput.value);
+    let inputNumber = numInput.value;
+    let inputBase = parseInt(fromBaseInput.value);
+    let base = parseInt(toBaseInput.value);
     let fracLen = parseInt(fracLenInput.value);
 
-    let parts = num.split('.');
-    let intPart = parseInt(parts[0]);
+    let parts = inputNumber.split('.');
+    let intPart = parseNumber(parts[0], inputBase, false);
+
     if (parts.length == 1) {
         let digits = numToBase(intPart, base);
-        baseOutput.innerHTML = formatDigits(digits);
-        powerOutput.innerHTML = formatPowers(digits, base, digits.length - 1);
+        baseOutput.innerHTML = digitsToString(digits);
+        productOutput.innerHTML = formatPowers(digits, base, digits.length - 1);
     } else if (parts.length == 2) {
-        let fracPart = parseFloat('0.' + parts[1]);
+        let fracPart = parseNumber(parts[1], inputBase, true);
         let intDigits = numToBase(intPart, base);
         let fracDigits = fracToBase(fracPart, base, fracLen);
-        baseOutput.innerHTML = formatDigits(intDigits) + '.' + formatDigits(fracDigits);
-        powerOutput.innerHTML = formatPowers(intDigits, base, intDigits.length - 1) + ' + ' + formatPowers(fracDigits, base, -1);
+        removeTrailingZeros(fracDigits);
+        baseOutput.innerHTML = digitsToString(intDigits) + '.' + digitsToString(fracDigits);
+        productOutput.innerHTML = formatPowers(intDigits, base, intDigits.length - 1) + ' + ' + formatPowers(fracDigits, base, -1);
     }
 }
 
 numInput.addEventListener('input', () => update());
-baseInput.addEventListener('input', () => update());
+toBaseInput.addEventListener('input', () => update());
+fromBaseInput.addEventListener('input', () => update());
 fracLenInput.addEventListener('input', () => update());

@@ -4,17 +4,31 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fixed-Point Base Number Converter</title>
+    <link rel="stylesheet" href="style.scss">
     <script type="module" src="main.ts"></script>
 </head>
 <body>
-    <h1>Fixed-Point Base Number Converter</h1>
-    <label for="input-numer">Number (base 10)</label>
-    <input id="input-number" name="input-number" type="number" placeholder="number"> 
-    <label for="input-base">Base</label>
-    <input id="input-base" name="input-base" type="number" min="2" value="2" placeholder="base"> 
-    <label for="input-frac-len">Fractional part length</label>
-    <input id="input-frac-len" name="input-frac-len" type="number" min="0" value="6" placeholder="frac-digits"> 
-    <div id="base-output"></div>
-    <div id="power-output"></div>
+    <main>
+      <h1>Fixed-Point Number Base Converter</h1>
+      <div class="container">
+        <h2>Input</h2>
+        <label for="input-numer">Number</label>
+        <input id="input-number" name="input-number" type="text" placeholder="Enter number" autofocus> 
+        <label for="input-base-from">From base</label>
+        <input id="input-base-from" name="input-base-from" type="number" min="2" max="36" value="10" placeholder="Enter base"> 
+        <label for="input-base-to">To base</label>
+        <input id="input-base-to" name="input-base-to" type="number" min="2" max="36" value="2" placeholder="Enter base"> 
+        <label for="input-frac-len">Fractional part length</label>
+        <input id="input-frac-len" name="input-frac-len" type="number" min="0" max="50" value="6" placeholder="Fractional length"> 
+      </div>
+      <div class="container">
+        <h2>Base</h2>
+        <div id="base-output" class="output-value"></div>
+      </div>
+      <div class="container">
+        <h2>Product</h2>
+        <div id="product-output" class="output-value"></div>
+      </div>
+    </main>
 </body>
 </html>
