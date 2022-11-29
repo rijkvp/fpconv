@@ -1,8 +1,12 @@
 {
   "name": "fpconv",
-  "version": "1.0.0",
+  "source": "src/index.html",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
   "devDependencies": {
-    "@parcel/transformer-sass": "2.8.0",
-    "parcel": "^2.8.0"
+    "parcel": "latest"
   }
 }
