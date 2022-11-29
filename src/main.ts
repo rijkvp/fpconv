@@ -5,6 +5,7 @@ const fromBaseInput = <HTMLInputElement>document.getElementById('input-base-from
 const toBaseInput = <HTMLInputElement>document.getElementById('input-base-to')!;
 const fracLenInput = <HTMLInputElement>document.getElementById('input-frac-len')!;
 const baseOutput = document.getElementById('base-output')!;
+const baseText = document.getElementById('base-text')!;
 const productOutput = document.getElementById('product-output')!;
 
 function numToBase(n: number, base: number): Array<number> {
@@ -100,10 +101,24 @@ function update() {
     baseOutput.innerHTML = '';
     productOutput.innerHTML = '';
 
+    if (numInput.value == null || numInput.value == '' || fromBaseInput == null || fromBaseInput.value == '' || toBaseInput.value == null || toBaseInput.value == '' || fracLenInput.value == null || fracLenInput.value == '') {
+        baseText.innerHTML = '?';
+        baseOutput.innerHTML = '?';
+        productOutput.innerHTML = '?';
+        return;
+    }
+
     let inputNumber = numInput.value;
     let inputBase = parseInt(fromBaseInput.value);
     let base = parseInt(toBaseInput.value);
     let fracLen = parseInt(fracLenInput.value);
+
+    baseText.innerHTML = `Number in base ${base}`;
+    if (inputBase == base) {
+        baseOutput.innerHTML = 'Select another base';
+        productOutput.innerHTML = '';
+        return;
+    }
 
     let parts = inputNumber.split('.');
     let intPart = parseNumber(parts[0], inputBase, false);
